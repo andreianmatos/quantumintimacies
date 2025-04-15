@@ -15,24 +15,7 @@ function setup() {
   noSmooth();
   noiseDetail(4, 0.5);
 
-  // Scale image to half screen size (maintain aspect ratio)
-  let scaleFactor = 0.5;
-  scaledW = floor(windowWidth * scaleFactor);
-  scaledH = floor(windowHeight * scaleFactor);
-
-  // Resize based on the smaller axis to maintain aspect
-  let ar1 = img1.width / img1.height;
-  if (scaledW / scaledH > ar1) {
-    scaledW = floor(scaledH * ar1);
-  } else {
-    scaledH = floor(scaledW / ar1);
-  }
-
-  // Create resized versions in graphics buffers
-  imgGraphics1 = createGraphics(scaledW, scaledH);
-  imgGraphics2 = createGraphics(scaledW, scaledH);
-  imgGraphics1.image(img1, 0, 0, scaledW, scaledH);
-  imgGraphics2.image(img2, 0, 0, scaledW, scaledH);
+  prepareScaledImages();
 }
 
 function draw() {
@@ -85,6 +68,31 @@ function draw() {
   }
 
   updatePixels();
+}
+
+// 🔄 Handle fullscreen or window resizing
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  prepareScaledImages();
+}
+
+// 🧠 Rescale and re-prepare image buffers
+function prepareScaledImages() {
+  let scaleFactor = 0.5;
+  scaledW = floor(windowWidth * scaleFactor);
+  scaledH = floor(windowHeight * scaleFactor);
+
+  let ar = img1.width / img1.height;
+  if (scaledW / scaledH > ar) {
+    scaledW = floor(scaledH * ar);
+  } else {
+    scaledH = floor(scaledW / ar);
+  }
+
+  imgGraphics1 = createGraphics(scaledW, scaledH);
+  imgGraphics2 = createGraphics(scaledW, scaledH);
+  imgGraphics1.image(img1, 0, 0, scaledW, scaledH);
+  imgGraphics2.image(img2, 0, 0, scaledW, scaledH);
 }
 
 function smoothstep(edge0, edge1, x) {
